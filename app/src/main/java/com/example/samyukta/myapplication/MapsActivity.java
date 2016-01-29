@@ -204,7 +204,7 @@ private void setUpGeofence(double latitude, double longitude) {
                     longitude,
                     GEOFENCE_RADIUS_IN_METERS
             )
-            .setExpirationDuration(GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+            .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                     Geofence.GEOFENCE_TRANSITION_EXIT)
             .build());
@@ -275,5 +275,6 @@ private void setUpGeofence(double latitude, double longitude) {
     @Override
     public void onResult(@NonNull Result result) {
        Log.d(TAG,"Result Add Geofence "+ result.getStatus().getStatusMessage()) ;
+        Log.d(TAG,"Result Add Geofence "+ result.getStatus()) ;
     }
 }
