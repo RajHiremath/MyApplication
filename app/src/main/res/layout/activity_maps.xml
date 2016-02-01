@@ -2,10 +2,15 @@
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-android:background="@color/view_bg"
+
 android:gravity="center_horizontal"
 android:orientation="vertical"
     android:weightSum="1">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/view_bg"
+        android:orientation="vertical">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -15,19 +20,19 @@ android:orientation="vertical"
         android:weightSum="1">
 
         <ImageView
-        android:layout_width="60dp"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:src="@drawable/marker"
             android:layout_marginLeft="60dp" />
 
         <TextView
         android:layout_width="wrap_content"
         android:layout_height="53dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="10dp"
         android:text="@string/set_location_title"
-        android:textColor="@color/white"
-        android:textSize="25dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_page_title"
         android:textStyle="bold"
             android:layout_marginLeft="20dp" />
     </LinearLayout>
@@ -36,22 +41,21 @@ android:orientation="vertical"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.13"
         android:layout_margin="5dp">
 
         <TextView
             android:layout_width="100dp"
-            android:layout_height="50dp"
+            android:layout_height="30dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Address"
             android:id="@+id/textView"
-            android:textColor="#ffffff"
-            android:textSize="24sp"
+            android:textColor="@color/txtColor"
+            android:textSize="@dimen/font_edit_txt_label"
             android:layout_margin="5dp" />
 
         <EditText
             android:layout_width="260dp"
-            android:layout_height="40dp"
+            android:layout_height="30dp"
             android:inputType="textPostalAddress"
             android:background="@color/white"
             android:textColor="@color/txtColor"
@@ -60,9 +64,46 @@ android:orientation="vertical"
             android:clickable="false"
             android:visibility="visible"
             android:layout_weight="1"
-            android:layout_margin="5dp" />
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="3dp" />
 
     </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Mesage"
+                android:id="@+id/textView1"
+                android:textColor="@color/txtColor"
+                android:textSize="@dimen/font_edit_txt_label"
+                android:layout_margin="5dp" />
+
+            <EditText
+                android:layout_width="260dp"
+                android:layout_height="30dp"
+                android:inputType="textAutoComplete"
+                android:background="@color/white"
+                android:textColor="@color/txtColor"
+                android:hint="enter message here..."
+                android:ems="10"
+                android:id="@+id/editTextMessage"
+                android:clickable="false"
+                android:visibility="visible"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp" />
+
+        </LinearLayout>
 
     <!--<Switch-->
         <!--android:layout_width="match_parent"-->
@@ -82,30 +123,35 @@ android:orientation="vertical"
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="5dp">
+        android:layout_height="30dp"
+        android:layout_margin="5dp"
+        android:layout_weight="0.13">
 
         <TextView
             android:layout_width="100dp"
-            android:layout_height="50dp"
+            android:layout_height="30dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Phone"
             android:id="@+id/textView2"
-            android:layout_margin="5dp"
-            android:textSize="25sp" />
+            android:textColor="@color/txtColor"
+            android:textSize="@dimen/font_edit_txt_label"
+            android:layout_margin="5dp" />
 
         <EditText
             android:layout_width="260dp"
-            android:layout_height="40dp"
+            android:layout_height="30dp"
             android:inputType="textPostalAddress"
             android:background="@color/white"
             android:textColor="@color/txtColor"
             android:ems="10"
-            android:id="@+id/editText2"
+            android:id="@+id/editTextPhone"
             android:clickable="false"
             android:visibility="visible"
             android:layout_weight="1"
-            android:layout_margin="5dp" />
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="3dp" />
     </LinearLayout>
 
     <Button
@@ -113,13 +159,78 @@ android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:background="#16525c"
+        android:background="#0c2628"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
         android:text="@string/btn_location"
         android:id="@+id/btnLocation"
         android:layout_gravity="right"
-        android:layout_marginRight="10dp" />
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#cdcfd0"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"/>
+
+    <RelativeLayout
+        android:id="@+id/listLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:visibility="visible"
+        android:padding="10dip"
+        android:background="#9bb4be">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="6dip"
+            android:contentDescription="TODO"
+            android:src="@drawable/pin" />
+
+        <TextView
+            android:id="@+id/secondLine"
+            android:layout_width="fill_parent"
+            android:layout_height="26dip"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/icon"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:text="Message to Send"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/firstLine"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/secondLine"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_toRightOf="@id/icon"
+            android:gravity="center_vertical"
+            android:text="Address of the location"
+            android:textSize="16sp" />
+        <ImageView
+            android:id="@+id/iconRemove"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="6dip"
+            android:contentDescription="TODO"
+            android:clickable="true"
+            android:src="@drawable/x_mark" />
+
+    </RelativeLayout>
 
     <TextView
     android:id="@+id/lblLocation"

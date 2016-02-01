@@ -5,8 +5,10 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationRequest;
@@ -30,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-public class MapsActivity extends Activity implements ConnectionCallbacks,
+public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
         OnConnectionFailedListener,ResultCallback {
     // LogCat tag
     private static final String TAG = MapsActivity.class.getSimpleName();
@@ -67,22 +70,40 @@ public class MapsActivity extends Activity implements ConnectionCallbacks,
     // UI elements
     private TextView lblLocation;
     private Button btnShowLocation, btnStartLocationUpdates, btnLocation;
-    private EditText locationText;
+    private EditText locationText,mPhoneNumber,mMessage;
+
 
     private List <Geofence>mGeofenceList;
 
     private PendingIntent mGeofencePendingIntent;
 
+    private ImageView imgRemoveGeofence;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        locationText = (EditText) findViewById(R.id.editText);
+        mPhoneNumber = (EditText) findViewById(R.id.editTextPhone);
+        mMessage = (EditText) findViewById(R.id.editTextMessage);
+
+
+        btnLocation = (Button) findViewById(R.id.btnLocation);
 
         lblLocation = (TextView) findViewById(R.id.lblLocation);
         btnShowLocation = (Button) findViewById(R.id.btnShowLocation);
         btnStartLocationUpdates = (Button) findViewById(R.id.btnLocationUpdates);
-        btnLocation = (Button) findViewById(R.id.btnLocation);
-        locationText = (EditText) findViewById(R.id.editText);
+
+
+        //this ismage in inside ilst
+        imgRemoveGeofence = (ImageView)findViewById(R.id.iconRemove);
+        imgRemoveGeofence.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeGeofenceById();
+            }
+        });
+
         mGeofenceList = new ArrayList<>();
         // First we need to check availability of play services
         if (checkPlayServices()) {
@@ -106,6 +127,7 @@ public class MapsActivity extends Activity implements ConnectionCallbacks,
                 AddressToLocation();
             }
         });
+
     }
 
     /**
@@ -127,6 +149,11 @@ public class MapsActivity extends Activity implements ConnectionCallbacks,
 
             lblLocation.setText(location.getLatitude() + " , " + location.getLongitude());
             setUpGeofence(location.getLatitude(),location.getLongitude());
+            TextView textViewAddress = (TextView)findViewById(R.id.firstLine);
+            TextView textViewMessage = (TextView)findViewById(R.id.secondLine);
+            Log.d(TAG,locationText.getText().toString());
+            textViewAddress.setText(locationText.getText().toString());
+            textViewMessage.setText(mMessage.getText().toString());
         } catch (IOException ioe) {
 
         }
@@ -236,6 +263,13 @@ private void setUpGeofence(double latitude, double longitude) {
                 FLAG_UPDATE_CURRENT);
     }
 
+    private void removeGeofenceById() {
+        List <String> myList = new ArrayList<>();
+        myList.add(0,"myRequestId");
+        LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient,myList).setResultCallback(this);
+    }
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -274,7 +308,7 @@ private void setUpGeofence(double latitude, double longitude) {
 
     @Override
     public void onResult(@NonNull Result result) {
-       Log.d(TAG,"Result Add Geofence "+ result.getStatus().getStatusMessage()) ;
-        Log.d(TAG,"Result Add Geofence "+ result.getStatus()) ;
+       Log.d(TAG,"Result Geofence "+ result.getStatus().getStatusMessage()) ;
+        Log.d(TAG,"Result Geofence "+ result.getStatus()) ;
     }
 }

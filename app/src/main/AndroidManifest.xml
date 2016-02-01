@@ -45,6 +45,8 @@
         <service
             android:name=".GeofenceTransitionsIntentService"
             android:exported="false" />
+
+        <activity android:name=".BaseActivity"></activity>
     </application>
 
 </manifest>

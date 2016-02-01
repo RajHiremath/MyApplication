@@ -49,7 +49,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
             SmsManager sm = SmsManager.getDefault();
 // HERE IS WHERE THE DESTINATION OF THE TEXT SHOULD GO
             String number = "4085054870";
-            sm.sendTextMessage(number, null, "Picked up Vibusha", null, null);
+            Log.d(TAG,"SomeMessage");
+            //sm.sendTextMessage(number, null, "Picked up Vibusha", null, null);
             //Send notification here
         } else {
             // Log the error.
