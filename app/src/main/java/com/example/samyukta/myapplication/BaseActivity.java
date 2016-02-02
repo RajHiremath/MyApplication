@@ -34,4 +34,23 @@ public class BaseActivity extends Activity {
         SharedPreferences.Editor editor = pref.edit();
         return pref.getString(key+"_msg", null);
     }
+
+    protected  String getNextId(){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        int id = pref.getInt("id", 0);
+        if(id <9)
+            editor.putInt("id", id+1);
+        else
+            editor.putInt("id", 0);
+        return Integer.toString(id);
+    }
+
+    protected  int getCurrentId(){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        return pref.getInt("id", 0);
+    }
+
+
 }
