@@ -166,7 +166,8 @@ android:orientation="vertical"
         android:id="@+id/btnLocation"
         android:layout_gravity="right"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp"
+        android:focusable="true" />
 
     </LinearLayout>
 
@@ -177,60 +178,10 @@ android:orientation="vertical"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"/>
 
-    <RelativeLayout
-        android:id="@+id/listLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="80dp"
-        android:visibility="visible"
-        android:padding="10dip"
-        android:background="#9bb4be">
-
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginRight="6dip"
-            android:contentDescription="TODO"
-            android:src="@drawable/pin" />
-
-        <TextView
-            android:id="@+id/secondLine"
-            android:layout_width="fill_parent"
-            android:layout_height="26dip"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@id/icon"
-            android:ellipsize="marquee"
-            android:singleLine="true"
-            android:text="Message to Send"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/firstLine"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/secondLine"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignWithParentIfMissing="true"
-            android:layout_toRightOf="@id/icon"
-            android:gravity="center_vertical"
-            android:text="Address of the location"
-            android:textSize="16sp" />
-        <ImageView
-            android:id="@+id/iconRemove"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="6dip"
-            android:contentDescription="TODO"
-            android:clickable="true"
-            android:src="@drawable/x_mark" />
-
-    </RelativeLayout>
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></ListView>
 
     <TextView
     android:id="@+id/lblLocation"

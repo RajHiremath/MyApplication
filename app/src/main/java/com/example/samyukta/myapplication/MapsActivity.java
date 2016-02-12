@@ -27,12 +27,14 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.CursorAdapter;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,6 +81,12 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
 
     private ImageView imgRemoveGeofence;
 
+    //Code related to List
+    private ListView lv;
+    private ArrayList <MyGeofenceData> mySavedList = new ArrayList<MyGeofenceData>(10);
+    private CustomAdapter adapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,14 +103,7 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
         btnStartLocationUpdates = (Button) findViewById(R.id.btnLocationUpdates);
 
 
-        //this ismage in inside ilst
-        imgRemoveGeofence = (ImageView)findViewById(R.id.iconRemove);
-        imgRemoveGeofence.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeGeofenceById();
-            }
-        });
+
 
         mGeofenceList = new ArrayList<>();
         // First we need to check availability of play services
@@ -128,6 +129,13 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
             }
         });
 
+
+        //Code for listView
+        initSavedGeofenceList();
+        lv=(ListView) findViewById(R.id.listView);
+        adapter = new CustomAdapter(this, mySavedList);
+        lv.setAdapter(adapter);
+
     }
 
     /**
@@ -149,11 +157,19 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
 
             lblLocation.setText(location.getLatitude() + " , " + location.getLongitude());
             setUpGeofence(location.getLatitude(),location.getLongitude());
-            TextView textViewAddress = (TextView)findViewById(R.id.firstLine);
-            TextView textViewMessage = (TextView)findViewById(R.id.secondLine);
+//            TextView textViewAddress = (TextView)findViewById(R.id.firstLine);
+//            TextView textViewMessage = (TextView)findViewById(R.id.secondLine);
             Log.d(TAG,locationText.getText().toString());
-            textViewAddress.setText(locationText.getText().toString());
-            textViewMessage.setText(mMessage.getText().toString());
+//            textViewAddress.setText(locationText.getText().toString());
+//            textViewMessage.setText(mMessage.getText().toString());
+            //save to local
+            saveValue(getNextId(),addressTxt,mPhoneNumber.getText().toString(),mMessage.getText().toString());
+            updateSavedList(addressTxt,mPhoneNumber.getText().toString(),mMessage.getText().toString());
+            //clear text fields
+            locationText.setText("");
+            mMessage.setText("");
+            mPhoneNumber.setText("");
+
         } catch (IOException ioe) {
 
         }
@@ -263,10 +279,11 @@ private void setUpGeofence(double latitude, double longitude) {
                 FLAG_UPDATE_CURRENT);
     }
 
-    private void removeGeofenceById() {
+    public void removeGeofenceById() {
         List <String> myList = new ArrayList<>();
         myList.add(0,"myRequestId");
         LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient,myList).setResultCallback(this);
+        removeKey(getCurrentId());
     }
 
 
@@ -308,7 +325,32 @@ private void setUpGeofence(double latitude, double longitude) {
 
     @Override
     public void onResult(@NonNull Result result) {
-       Log.d(TAG,"Result Geofence "+ result.getStatus().getStatusMessage()) ;
+       Log.d(TAG,"Result Geofence "+ result.toString()) ;
         Log.d(TAG,"Result Geofence "+ result.getStatus()) ;
+    }
+
+    public void initSavedGeofenceList(){
+
+        int length = getCurrentId();
+        for(int i=0;i<length;i++)
+        {
+            mySavedList.add(i,new MyGeofenceData(getAddress(i),getPhoneNumber(i),getMessage(i)));
+        }
+    }
+
+    public void updateSavedList(String addr, String ph, String msg){
+        mySavedList.add(mySavedList.size(),new MyGeofenceData(addr, ph, msg));
+        adapter.setListData(mySavedList);
+    }
+    public class MyGeofenceData{
+        String address;
+        String phone;
+        String message;
+
+        public MyGeofenceData(String addr, String ph, String msg){
+            this.address = addr;
+            this.phone = ph;
+            this.message = msg;
+        }
     }
 }
