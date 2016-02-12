@@ -1,33 +1,19 @@
 package com.example.samyukta.myapplication;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Result;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.FusedLocationProviderApi;
-import com.google.android.gms.maps.model.LatLng;
-
 import android.Manifest;
-import android.app.Activity;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+//import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,12 +22,35 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.Result;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+
+
 
 public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
         OnConnectionFailedListener,ResultCallback {
@@ -70,14 +79,22 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
     // UI elements
     private TextView lblLocation;
     private Button btnShowLocation, btnStartLocationUpdates, btnLocation;
-    private EditText locationText,mPhoneNumber,mMessage;
+    private EditText locationText, mPhoneNumber, mMessage;
 
 
-    private List <Geofence>mGeofenceList;
+    private List<Geofence> mGeofenceList;
 
     private PendingIntent mGeofencePendingIntent;
 
     private ImageView imgRemoveGeofence;
+
+    //Email
+    private static final String username = "bhiremath@gmail.com";
+    private static final String password = "Samyukta!2#";
+
+    String email = "hraj50 @yahoo.com";
+    String subject = "Hello";
+    //String message = "Picking up Vibushhhhhhhaaaaa";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +113,7 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
 
 
         //this ismage in inside ilst
-        imgRemoveGeofence = (ImageView)findViewById(R.id.iconRemove);
+        imgRemoveGeofence = (ImageView) findViewById(R.id.iconRemove);
         imgRemoveGeofence.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,14 +142,29 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
             @Override
             public void onClick(View v) {
                 AddressToLocation();
+                // sendEmail();
+                sendMail(email, subject, mMessage.getText().toString());
             }
         });
 
     }
 
+    // This will open up the google mail client, needs user interaction
+    // to send mail to destination.
+    private void sendEmail() {
+
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"hraj50@yahoo.com"});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "My email's subject");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "My email's body");
+        Log.d(TAG, "SendEmail: It will open the eMail client. ");
+        startActivity(Intent.createChooser(emailIntent, "mail to.."));
+    }
+
     /**
      * Method to conver address to lattitude and longittude
-     * */
+     */
     private void AddressToLocation() {
         Log.d(TAG, "AddressToLocation: " + locationText.getText());
 
@@ -148,10 +180,10 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
             Address location = address.get(0);
 
             lblLocation.setText(location.getLatitude() + " , " + location.getLongitude());
-            setUpGeofence(location.getLatitude(),location.getLongitude());
-            TextView textViewAddress = (TextView)findViewById(R.id.firstLine);
-            TextView textViewMessage = (TextView)findViewById(R.id.secondLine);
-            Log.d(TAG,locationText.getText().toString());
+            setUpGeofence(location.getLatitude(), location.getLongitude());
+            TextView textViewAddress = (TextView) findViewById(R.id.firstLine);
+            TextView textViewMessage = (TextView) findViewById(R.id.secondLine);
+            Log.d(TAG, locationText.getText().toString());
             textViewAddress.setText(locationText.getText().toString());
             textViewMessage.setText(mMessage.getText().toString());
         } catch (IOException ioe) {
@@ -161,7 +193,7 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
 
     /**
      * Method to display the location on UI
-     * */
+     */
     private void displayLocation() {
 
         // mLastLocation = LocationServices.FusedLocationApi
@@ -194,7 +226,7 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
 
     /**
      * Creating google api client object
-     * */
+     */
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -204,7 +236,7 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
 
     /**
      * Method to verify google play services on the device
-     * */
+     */
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil
                 .isGooglePlayServicesAvailable(this);
@@ -223,27 +255,27 @@ public class MapsActivity extends BaseActivity implements ConnectionCallbacks,
         return true;
     }
 
-private void setUpGeofence(double latitude, double longitude) {
-    mGeofenceList.add(new Geofence.Builder()
-            .setRequestId("myRequestId")
-            .setCircularRegion(
-                    latitude,
-                    longitude,
-                    GEOFENCE_RADIUS_IN_METERS
-            )
-            .setExpirationDuration(Geofence.NEVER_EXPIRE)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                    Geofence.GEOFENCE_TRANSITION_EXIT)
-            .build());
-    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        return;
+    private void setUpGeofence(double latitude, double longitude) {
+        mGeofenceList.add(new Geofence.Builder()
+                .setRequestId("myRequestId")
+                .setCircularRegion(
+                        latitude,
+                        longitude,
+                        GEOFENCE_RADIUS_IN_METERS
+                )
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                        Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build());
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        LocationServices.GeofencingApi.addGeofences(
+                mGoogleApiClient,
+                getGeofencingRequest(),
+                getGeofencePendingIntent()
+        ).setResultCallback(this);
     }
-    LocationServices.GeofencingApi.addGeofences(
-            mGoogleApiClient,
-            getGeofencingRequest(),
-            getGeofencePendingIntent()
-    ).setResultCallback(this);
-}
 
     private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
@@ -251,6 +283,7 @@ private void setUpGeofence(double latitude, double longitude) {
         builder.addGeofences(mGeofenceList);
         return builder.build();
     }
+
     private PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
         if (mGeofencePendingIntent != null) {
@@ -264,9 +297,9 @@ private void setUpGeofence(double latitude, double longitude) {
     }
 
     private void removeGeofenceById() {
-        List <String> myList = new ArrayList<>();
-        myList.add(0,"myRequestId");
-        LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient,myList).setResultCallback(this);
+        List<String> myList = new ArrayList<>();
+        myList.add(0, "myRequestId");
+        LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, myList).setResultCallback(this);
     }
 
 
@@ -308,7 +341,76 @@ private void setUpGeofence(double latitude, double longitude) {
 
     @Override
     public void onResult(@NonNull Result result) {
-       Log.d(TAG,"Result Geofence "+ result.getStatus().getStatusMessage()) ;
-        Log.d(TAG,"Result Geofence "+ result.getStatus()) ;
+        Log.d(TAG, "Result Geofence " + result.getStatus().getStatusMessage());
+        Log.d(TAG, "Result Geofence " + result.getStatus());
     }
+
+
+
+    // Send Email section
+
+    private void sendMail(String email, String subject, String messageBody) {
+        Session session = createSessionObject();
+
+        try {
+            Message message = createMessage(email, subject, messageBody, session);
+            new SendMailTask().execute(message);
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Message createMessage(String email, String subject, String messageBody, Session session) throws MessagingException, UnsupportedEncodingException {
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress("bhiremath@gmail.com", "Hello"));
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(email, email));
+        message.setSubject(subject);
+        message.setText(messageBody);
+        return message;
+    }
+
+    private Session createSessionObject() {
+        Properties properties = new Properties();
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+
+        return Session.getInstance(properties, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+    }
+
+    private class SendMailTask extends AsyncTask<Message, Void, Void> {
+        private ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(MapsActivity.this, "Please wait", "Sending mail", true, false);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+        }
+
+        @Override
+        protected Void doInBackground(Message... messages) {
+            try {
+                Transport.send(messages[0]);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
 }

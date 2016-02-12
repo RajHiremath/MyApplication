@@ -6,6 +6,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
@@ -60,6 +61,10 @@ public class GeofenceTransitionsIntentService extends IntentService {
         }
     }
 
+
+    // This will open up the whatapp client, needs user interaction
+    // to send message to destination.
+    // TODO: Need to explore, how to send message w/o user interaction.
     private void SendMessageToWhatsApp() {
         String phoneNumber = "+14085054890";
         Uri uri = Uri.parse("smsto:" + phoneNumber);
